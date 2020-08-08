@@ -1,16 +1,20 @@
 const express = require('express');
-const { processMock } = require('../utils/mocks/process');
+const UsersService = require('../services/users');
 
 function moviesApi(app) {
   const router = express.Router();
   app.use('/api/userAssign', router);
 
+  const userService = new UsersService();
+
   router.get('/', async (req, res, next) => {
+    const { tags } = req.query;
+
     try {
-      const movies = await Promise.resolve(processMock);
+      const users = await userService.getUsers({ tags });
 
       res.status(200).json({
-        data: movies,
+        data: users,
         message: 'users listed',
       });
     } catch (err) {
@@ -19,11 +23,12 @@ function moviesApi(app) {
   });
 
   router.get('/:userAssignId', async (req, res, next) => {
+    const { userAssignId } = req.params;
     try {
-      const movies = await Promise.resolve(processMock[0]);
+      const user = await userService.getUser({ userAssignId });
 
       res.status(200).json({
-        data: movies,
+        data: user,
         message: 'user retrieved',
       });
     } catch (err) {
@@ -32,11 +37,12 @@ function moviesApi(app) {
   });
 
   router.post('/', async (req, res, next) => {
+    const { body: user } = req;
     try {
-      const createdMovieId = await Promise.resolve(processMock[0].id);
+      const createdUserId = await userService.createUser({ user });
 
       res.status(201).json({
-        data: createdMovieId,
+        data: createdUserId,
         message: 'user created',
       });
     } catch (err) {
@@ -45,12 +51,17 @@ function moviesApi(app) {
   });
 
   router.put('/:userAssignId', async (req, res, next) => {
+    const { body: user } = req;
+    const { userAssignId } = req.params;
     try {
-      const updatedMovieId = await Promise.resolve(processMock[0].id);
+      const updatedUserId = await userService.updateUser({
+        userAssignId,
+        user,
+      });
 
       res.status(200).json({
-        data: updatedMovieId,
-        message: 'movie updated',
+        data: updatedUserId,
+        message: 'User updated',
       });
     } catch (err) {
       next(err);
@@ -58,8 +69,9 @@ function moviesApi(app) {
   });
 
   router.delete('/:userAssignId', async (req, res, next) => {
+    const { userAssignId } = req.params;
     try {
-      const deletedMovieId = await Promise.resolve(processMock[0].id);
+      const deletedMovieId = await userService.deleteUser({ userAssignId });
 
       res.status(200).json({
         data: deletedMovieId,

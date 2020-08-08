@@ -1,4 +1,4 @@
-const processMock = [
+const usersMock = [
   {
     id: '41928402-97e4-41a7-9533-a7fabae62fce',
     first_name: 'Karen',
@@ -88,5 +88,5 @@ const processMock = [
 ];
 
 module.exports = {
-  processMock,
+  usersMock,
 };
