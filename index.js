@@ -5,8 +5,9 @@ const app = express();
 const { config } = require('./config/index');
 
 const authApi = require('./routes/auth');
-const usersApi = require('./routes/users.js');
-const userProcessApi = require('./routes/process.js');
+const processApi = require('./routes/process.js');
+const userProcessApi = require('./routes/userProcess.js');
+const userLeadersApi = require('./routes/userLeaders.js');
 
 const {
   logErrors,
@@ -19,8 +20,9 @@ const notFoundHandler = require('./utils/middleware/notFoundHandler');
 app.use(express.json());
 
 authApi(app);
-usersApi(app);
+processApi(app);
 userProcessApi(app);
+userLeadersApi(app);
 
 app.use(notFoundHandler);
 

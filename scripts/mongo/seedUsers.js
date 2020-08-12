@@ -29,7 +29,7 @@ async function createUser(mongoDB, user) {
   const { name, email, password, isAdmin } = user;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const userId = await mongoDB.create('userRegister', {
+  const userId = await mongoDB.create('users', {
     name,
     email,
     password: hashedPassword,

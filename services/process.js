@@ -1,35 +1,36 @@
 const MongoLib = require('../lib/mongo');
 
-class UserProcessService {
+class ProcessesService {
   constructor() {
-    this.collection = 'user-process';
+    this.collection = 'process';
     this.mongoDB = new MongoLib();
   }
 
-  async getUserProcesses({ userId }) {
-    const query = userId && { userId };
-    const userProcesses = await this.mongoDB.getAll(this.collection, query);
-
-    return userProcesses || [];
+  async getProcesses({ tags }) {
+    const query = tags && { tags: { $in: tags } };
+    const processes = await this.mongoDB.getAll(this.collection, query);
+    return processes || [];
   }
 
-  async createUserProcess({ userProcess }) {
-    const createdUserProcessId = await this.mongoDB.create(
-      this.collection,
-      userProcess,
-    );
-
-    return createdUserProcessId;
+  async getProcess({ processId }) {
+    const processUnique = await this.mongoDB.get(this.collection, processId);
+    return processUnique || {};
   }
 
-  async deleteUserProcess({ userProcessId }) {
-    const deletedUserProcessId = await this.mongoDB.delete(
-      this.collection,
-      userProcessId,
-    );
+  async createProcess({ processUnique }) {
+    const createProcessId = this.mongoDB.create(this.collection, processUnique);
+    return createProcessId;
+  }
 
-    return deletedUserProcessId;
+  async updateProcess({ processId, processUnique }) {
+    const updateProcessId = await this.mongoDB.update(this.collection, processId, processUnique);
+    return updateProcessId;
+  }
+
+  async deleteProcess({ processId }) {
+    const deleteProcessId = await this.mongoDB.delete(this.collection, processId);
+    return deleteProcessId;
   }
 }
 
-module.exports = UserProcessService;
+module.exports = ProcessesService;

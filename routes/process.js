@@ -1,77 +1,114 @@
 const express = require('express');
 const passport = require('passport');
+const ProcessesService = require('../services/process');
 
-const UserProcessesService = require('../services/process');
+const scopesValidationHandler = require('../utils/middleware/scopesValidationHandler');
+
+const cacheResponse = require('../utils/cacheResponse');
+const {
+  FIVE_MINUTES_IN_SECONDS,
+  SIXTY_MINUTES_IN_SECONDS,
+} = require('../utils/time');
 
 require('../utils/auth/strategies/jwt');
 
-function userProcessApi(app) {
+function processApi(app) {
   const router = express.Router();
-  app.use('/api/user-process', router);
+  app.use('/api/process', router);
 
-  const userProcessService = new UserProcessesService();
+  const processesService = new ProcessesService();
 
-  router.get(
-    '/',
+  router.get('/',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['read:movies']),
     async (req, res, next) => {
-      const { userId } = req.query;
+      cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
+      const { tags } = req.query;
 
       try {
-        const userProcess = await userProcessService.getUserProcesses({ userId });
+        const processes = await processesService.getProcesses({ tags });
 
         res.status(200).json({
-          data: userProcess,
-          message: 'user process listed',
-        });
-      } catch (error) {
-        next(error);
-      }
-    },
-  );
-  router.post('/',
-    passport.authenticate('jwt', { session: false }),
-    async (
-      req,
-      res,
-      next,
-    ) => {
-      const { body: userProcess } = req;
-
-      try {
-        const createdUserProcessId = await userProcessService.createUserProcess({
-          userProcess,
-        });
-
-        res.status(201).json({
-          data: createdUserProcessId,
-          message: 'user process created',
+          data: processes,
+          message: 'processes listed',
         });
       } catch (err) {
         next(err);
       }
     });
 
-  router.delete(
-    '/:userProcessId',
+  router.get('/:processId',
     passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['read:movies']),
     async (req, res, next) => {
-      const { userProcessId } = req.params;
-
+      const { processId } = req.params;
       try {
-        const deletedUserProcessId = await userProcessService.deleteUserProcess({
-          userProcessId,
+        const processUnique = await processesService.getProcess({ processId });
+
+        res.status(200).json({
+          data: processUnique,
+          message: 'processUnique retrieved',
+        });
+      } catch (err) {
+        next(err);
+      }
+    });
+
+  router.post('/',
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['create:movies']),
+    async (req, res, next) => {
+      const { body: processUnique } = req;
+      try {
+        const createdProcessId = await processesService.createProcess({ processUnique });
+
+        res.status(201).json({
+          data: createdProcessId,
+          message: 'processUnique created',
+        });
+      } catch (err) {
+        next(err);
+      }
+    });
+
+  router.put('/:processId',
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['update:movies']),
+    async (req, res, next) => {
+      cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
+      const { body: processUnique } = req;
+      const { processId } = req.params;
+      try {
+        const updatedProcessId = await processesService.updateProcess({
+          processId,
+          processUnique,
         });
 
         res.status(200).json({
-          data: deletedUserProcessId,
-          message: 'user process deleted',
+          data: updatedProcessId,
+          message: 'processUnique updated',
         });
-      } catch (error) {
-        next(error);
+      } catch (err) {
+        next(err);
       }
-    },
-  );
+    });
+
+  router.delete('/:processId',
+    passport.authenticate('jwt', { session: false }),
+    scopesValidationHandler(['delete:movies']),
+    async (req, res, next) => {
+      const { processId } = req.params;
+      try {
+        const deletedProcessId = await processesService.deleteProcess({ processId });
+
+        res.status(200).json({
+          data: deletedProcessId,
+          message: 'processUnique deleted',
+        });
+      } catch (err) {
+        next(err);
+      }
+    });
 }
 
-module.exports = userProcessApi;
+module.exports = processApi;

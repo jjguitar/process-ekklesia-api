@@ -3,14 +3,14 @@
 const chalk = require('chalk');
 const debug = require('debug')('app:scripts:movies');
 const MongoLib = require('../../lib/mongo');
-const { moviesMock } = require('../../utils/mocks/movies');
+const { usersMock } = require('../../utils/mocks/process');
 
 async function seedMovies() {
   try {
     const mongoDB = new MongoLib();
 
-    const promises = moviesMock.map(async movie => {
-      await mongoDB.create('movies', movie);
+    const promises = usersMock.map(async (movie) => {
+      await mongoDB.create('process', movie);
     });
 
     await Promise.all(promises);

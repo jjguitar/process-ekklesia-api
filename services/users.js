@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const MongoLib = require('../lib/mongo');
 
 class UsersService {
@@ -6,30 +7,34 @@ class UsersService {
     this.mongoDB = new MongoLib();
   }
 
-  async getUsers({ tags }) {
-    const query = tags && { tags: { $in: tags } };
-    const users = await this.mongoDB.getAll(this.collection, query);
-    return users || [];
-  }
-
-  async getUser({ userAssignId }) {
-    const user = await this.mongoDB.get(this.collection, userAssignId);
-    return user || {};
+  async getUser({ email }) {
+    const [user] = await this.mongoDB.getAll(this.collection, { email });
+    return user;
   }
 
   async createUser({ user }) {
-    const createUserId = this.mongoDB.create(this.collection, user);
+    const { name, email, password } = user;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const createUserId = await this.mongoDB.create(this.collection, {
+      name,
+      email,
+      password: hashedPassword,
+    });
+
     return createUserId;
   }
 
-  async updateUser({ userAssignId, user }) {
-    const updateUserId = await this.mongoDB.update(this.collection, userAssignId, user);
-    return updateUserId;
-  }
+  async getOrCreateUser({ user }) {
+    const queriedUser = await this.getUser({ email: user.email });
 
-  async deleteUser({ userAssignId }) {
-    const deleteUserId = await this.mongoDB.delete(this.collection, userAssignId);
-    return deleteUserId;
+    if (queriedUser) {
+      return queriedUser;
+    }
+
+    await this.createUser({ user });
+    // eslint-disable-next-line no-return-await
+    return await this.getUser({ email: user.email });
   }
 }
 
