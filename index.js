@@ -3,7 +3,10 @@ const express = require('express');
 const app = express();
 
 const { config } = require('./config/index');
+
+const authApi = require('./routes/auth');
 const usersApi = require('./routes/users.js');
+const userProcessApi = require('./routes/process.js');
 
 const {
   logErrors,
@@ -15,7 +18,9 @@ const notFoundHandler = require('./utils/middleware/notFoundHandler');
 
 app.use(express.json());
 
+authApi(app);
 usersApi(app);
+userProcessApi(app);
 
 app.use(notFoundHandler);
 
