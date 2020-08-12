@@ -1,6 +1,12 @@
 const express = require('express');
 const UsersService = require('../services/users');
 
+const cacheResponse = require('../utils/cacheResponse');
+const {
+  FIVE_MINUTES_IN_SECONDS,
+  SIXTY_MINUTES_IN_SECONDS,
+} = require('../utils/time');
+
 function moviesApi(app) {
   const router = express.Router();
   app.use('/api/userAssign', router);
@@ -8,6 +14,7 @@ function moviesApi(app) {
   const userService = new UsersService();
 
   router.get('/', async (req, res, next) => {
+    cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
     const { tags } = req.query;
 
     try {
@@ -51,6 +58,7 @@ function moviesApi(app) {
   });
 
   router.put('/:userAssignId', async (req, res, next) => {
+    cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
     const { body: user } = req;
     const { userAssignId } = req.params;
     try {

@@ -1,0 +1,30 @@
+{
+  "name": "eConnect",
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@now/node-server"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.js",
+      "methods": ["POST", "GET", "PUT", "DELETE"],
+      "headers": {
+        "Access-Control-Allow-Origin": "_",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Credentials": "true"
+      }
+    }
+  ],
+  "env": {
+    "DB_USER": "@econnect-db-user",
+    "DB_PASSWORD": "@econnect-db-password",
+    "DB_HOST_PRIMARY": "@econnect-db-host-primary",
+    "DB_HOST_SECOND_1": "@econnect-db-host-second-1",
+    "DB_HOST_SECOND_2": "@econnect-db-host-second-2",
+    "DB_NAME": "@econnect-db-name"
+  }
+}

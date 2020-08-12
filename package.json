@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hapi/boom": "^7.4.2",
+    "@hapi/joi": "^15.1.0",
     "babel-eslint": "^10.1.0",
     "dotenv": "^8.0.0",
     "eslint-config-airbnb": "^18.2.0",
