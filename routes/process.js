@@ -20,7 +20,7 @@ function processApi(app) {
 
   router.get('/',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['read:movies']),
+    scopesValidationHandler(['read:process']),
     async (req, res, next) => {
       cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
       const { tags } = req.query;
@@ -39,7 +39,7 @@ function processApi(app) {
 
   router.get('/:processId',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['read:movies']),
+    scopesValidationHandler(['read:process']),
     async (req, res, next) => {
       const { processId } = req.params;
       try {
@@ -56,7 +56,7 @@ function processApi(app) {
 
   router.post('/',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['create:movies']),
+    scopesValidationHandler(['create:process']),
     async (req, res, next) => {
       const { body: processUnique } = req;
       try {
@@ -73,7 +73,7 @@ function processApi(app) {
 
   router.put('/:processId',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['update:movies']),
+    scopesValidationHandler(['update:process']),
     async (req, res, next) => {
       cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
       const { body: processUnique } = req;
@@ -95,7 +95,7 @@ function processApi(app) {
 
   router.delete('/:processId',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['delete:movies']),
+    scopesValidationHandler(['delete:process']),
     async (req, res, next) => {
       const { processId } = req.params;
       try {

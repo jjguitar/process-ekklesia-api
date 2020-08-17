@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(notFoundHandler);
 app.use(logErrors);
 app.use(wrapErrors);
 app.use(errorHandler);
+app.use(cors());
 
 app.listen(config.port, () => {
   console.log(`Listening http://localhost:${config.port}`);
