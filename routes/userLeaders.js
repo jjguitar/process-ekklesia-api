@@ -15,7 +15,7 @@ function userLeaderApi(app) {
   router.get(
     '/',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['read:user-movies']),
+    scopesValidationHandler(['read:user-process']),
     async (req, res, next) => {
       const { userId } = req.query;
 
@@ -33,7 +33,7 @@ function userLeaderApi(app) {
   );
   router.post('/',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['create:user-movies']),
+    scopesValidationHandler(['create:user-process']),
     async (
       req,
       res,
@@ -58,7 +58,7 @@ function userLeaderApi(app) {
   router.delete(
     '/:userLeaderId',
     passport.authenticate('jwt', { session: false }),
-    scopesValidationHandler(['delete:user-movies']),
+    scopesValidationHandler(['delete:user-process']),
     async (req, res, next) => {
       const { userLeaderId } = req.params;
 
